@@ -32,14 +32,13 @@ async def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
     db_user = crud_users.get_user_by_email(db, email=user.email)
     if db_user:
         raise HTTPException(status_code=400, detail="Email already registered")
-    
     db_user = models.User(
         username=user.username,
         email=user.email,
         password=user.password,
         is_active=True
     )
-    
+    print("cjkskfjsjkfkcsjkdskjffjksjk",db_user)
     return crud_users.create_user(db=db, user=db_user)
 
 

@@ -13,7 +13,6 @@ def get_user_by_email(db: Session, email: str):
 def create_user(db: Session, user: UserCreate): 
     print(user)
     hashed_password = get_password_hash(user.password)  
-    print("hashed password",hashed_password)
     db_user = User(
         id=uuid.uuid4(),
         username=user.username,

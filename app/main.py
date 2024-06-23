@@ -8,7 +8,6 @@ from app.dependencies import get_db
 from app.security import create_access_token, get_current_active_user
 from app.crud import crud_users
 from app.utils import get_password_hash
-import uuid
 
 app = FastAPI()
 
@@ -38,31 +37,9 @@ async def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
         password=user.password,
         is_active=True
     )
-    print("cjkskfjsjkfkcsjkdskjffjksjk",db_user)
     return crud_users.create_user(db=db, user=db_user)
 
 
 @app.get("/users/me/", response_model=schemas.User)
 async def read_users_me(current_user: schemas.User = Depends(get_current_active_user)):
     return current_user
-
-@app.post("/questions/", response_model=schemas.Question)
-async def create_questions(
-    question: schemas.QuestionCreate, 
-    db: Session = Depends(get_db), 
-    current_user: schemas.User = Depends(get_current_active_user)
-):
-    db_question = models.Questions(id=uuid.uuid4(), question_text=question.question_text)
-    db.add(db_question)
-    db.commit()
-    db.refresh(db_question)
-    for choice in question.choices:
-        db_choice = models.Choices(
-            id=uuid.uuid4(),
-            choice_text=choice.choice_text, 
-            is_correct=choice.is_correct, 
-            question_id=db_question.id
-        )
-        db.add(db_choice)
-        db.commit()
-    return {"message": f"Question created successfully by {current_user.username}"}
